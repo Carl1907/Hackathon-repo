@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Top Hat",
+    "image": "/assets/hat1.svg"
+  },
+  {
+    "name": "Baseball Cap",
+    "image": "/assets/hat2.svg"
+  },
+  {
+    "name": "Crown",
+    "image": "/assets/hat3.svg"
+  },
+  {
+    "name": "Wizard Hat",
+    "image": "/assets/hat1.svg"
+  },
+  {
+    "name": "Beanie",
+    "image": "/assets/hat2.svg"
+  },
+  {
+    "name": "Helmet",
+    "image": "/assets/hat3.svg"
+  },
+  {
+    "name": "Sombrero",
+    "image": "/assets/hat1.svg"
+  },
+  {
+    "name": "Beret",
+    "image": "/assets/hat2.svg"
+  }
+]

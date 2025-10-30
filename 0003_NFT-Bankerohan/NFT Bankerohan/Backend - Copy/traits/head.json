@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Robot",
+    "image": "/assets/head1.svg"
+  },
+  {
+    "name": "Alien",
+    "image": "/assets/head2.svg"
+  },
+  {
+    "name": "Zombie",
+    "image": "/assets/head3.svg"
+  },
+  {
+    "name": "Ninja",
+    "image": "/assets/head1.svg"
+  },
+  {
+    "name": "Pirate",
+    "image": "/assets/head2.svg"
+  },
+  {
+    "name": "Viking",
+    "image": "/assets/head3.svg"
+  },
+  {
+    "name": "Samurai",
+    "image": "/assets/head1.svg"
+  },
+  {
+    "name": "Monk",
+    "image": "/assets/head2.svg"
+  },
+  {
+    "name": "Cyborg",
+    "image": "/assets/head3.svg"
+  },
+  {
+    "name": "Ghost",
+    "image": "/assets/head1.svg"
+  },
+  {
+    "name": "Demon",
+    "image": "/assets/head2.svg"
+  },
+  {
+    "name": "Angel",
+    "image": "/assets/head3.svg"
+  }
+]

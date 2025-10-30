@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NFT Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #667eea;
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 2.5em;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 1.1em;
+    }
+
+    .generate-btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-bottom: 30px;
+    }
+
+    .generate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .generate-btn:active {
+      transform: translateY(0);
+    }
+
+    .generate-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .nft-card {
+      display: none;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 20px;
+    }
+
+    .nft-card.active {
+      display: block;
+      animation: fadeIn 0.5s;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .nft-id {
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-family: "Courier New", monospace;
+      font-size: 0.9em;
+      color: #333;
+      border: 2px solid #667eea;
+    }
+
+    .nft-combined-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e8eef7 100%);
+      border-radius: 15px;
+      overflow: hidden;
+    }
+
+    /* NFT Layering */
+    .nft-layer {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+     #nftHeadLayer {
+       top: 0;
+       z-index: 1;
+     }
+
+     #nftHatLayer {
+       top: -10px; /* Slightly above head */
+       z-index: 2;
+     }
+
+    .traits-info {
+      display: flex;
+      justify-content: space-around;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .trait-info-item {
+      background: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      text-align: center;
+      flex: 1;
+    }
+
+    .trait-info-label {
+      font-size: 0.8em;
+      color: #667eea;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .trait-info-name {
+      font-size: 1em;
+      color: #333;
+    }
+
+    .timestamp {
+      text-align: center;
+      color: #666;
+      font-size: 0.9em;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid #e0e0e0;
+    }
+
+    .loading {
+      text-align: center;
+      color: #667eea;
+      font-size: 1.2em;
+      display: none;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .error {
+      display: none;
+      background: #ff6b6b;
+      color: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .error.active {
+      display: block;
+      animation: fadeIn 0.5s;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 NFT Generator</h1>
+    <p class="subtitle">Generate unique NFTs with random traits</p>
+
+    <button class="generate-btn" onclick="generateNFT()">✨ Generate NFT</button>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      Generating your NFT...
+    </div>
+
+    <div class="error" id="error"></div>
+
+    <div class="nft-card" id="nftCard">
+      <div class="nft-id" id="nftId"></div>
+
+      <!-- Combined NFT Display -->
+      <div class="nft-combined-container">
+        <img class="nft-layer" id="nftHeadLayer" src="" alt="Head" />
+        <img class="nft-layer" id="nftHatLayer" src="" alt="Hat" />
+      </div>
+
+      <div class="traits-info">
+        <div class="trait-info-item">
+          <div class="trait-info-label">🎩 Hat</div>
+          <div class="trait-info-name" id="traitHat"></div>
+        </div>
+        <div class="trait-info-item">
+          <div class="trait-info-label">👤 Head</div>
+          <div class="trait-info-name" id="traitHead"></div>
+        </div>
+      </div>
+
+      <div class="timestamp" id="timestamp"></div>
+    </div>
+  </div>
+
+  <script>
+    async function generateNFT() {
+      const button = document.querySelector(".generate-btn");
+      const loading = document.getElementById("loading");
+      const error = document.getElementById("error");
+      const nftCard = document.getElementById("nftCard");
+
+      error.classList.remove("active");
+      nftCard.classList.remove("active");
+      loading.classList.add("active");
+      button.disabled = true;
+
+      try {
+        const response = await fetch("http://localhost:3000/api/generate-nft");
+
+        if (!response.ok) throw new Error("Failed to generate NFT");
+
+        const data = await response.json();
+
+        document.getElementById("nftId").textContent = `ID: ${data.id}`;
+
+        const hatData =
+          typeof data.traits.hat === "object"
+            ? data.traits.hat
+            : { name: data.traits.hat, image: "" };
+        const headData =
+          typeof data.traits.head === "object"
+            ? data.traits.head
+            : { name: data.traits.head, image: "" };
+
+        document.getElementById("nftHeadLayer").src = headData.image || "";
+        document.getElementById("nftHatLayer").src = hatData.image || "";
+
+        document.getElementById("traitHat").textContent = hatData.name;
+        document.getElementById("traitHead").textContent = headData.name;
+
+        document.getElementById(
+          "timestamp"
+        ).textContent = `Created: ${new Date(
+          data.createdAt
+        ).toLocaleString()}`;
+
+        loading.classList.remove("active");
+        nftCard.classList.add("active");
+      } catch (err) {
+        console.error("Error:", err);
+        error.textContent = `Error: ${err.message}. Make sure the backend server is running on port 3000.`;
+        error.classList.add("active");
+        loading.classList.remove("active");
+      } finally {
+        button.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>

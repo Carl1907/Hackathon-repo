@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Warrior",
+    "image": "/assets/body1.svg"
+  },
+  {
+    "name": "Mage",
+    "image": "/assets/body2.svg"
+  },
+  {
+    "name": "Rogue",
+    "image": "/assets/body3.svg"
+  },
+  {
+    "name": "Knight",
+    "image": "/assets/body1.svg"
+  },
+  {
+    "name": "Archer",
+    "image": "/assets/body2.svg"
+  },
+  {
+    "name": "Sorcerer",
+    "image": "/assets/body3.svg"
+  },
+  {
+    "name": "Barbarian",
+    "image": "/assets/body1.svg"
+  },
+  {
+    "name": "Paladin",
+    "image": "/assets/body2.svg"
+  },
+  {
+    "name": "Necromancer",
+    "image": "/assets/body3.svg"
+  },
+  {
+    "name": "Shaman",
+    "image": "/assets/body1.svg"
+  },
+  {
+    "name": "Druid",
+    "image": "/assets/body2.svg"
+  },
+  {
+    "name": "Bard",
+    "image": "/assets/body3.svg"
+  }
+]

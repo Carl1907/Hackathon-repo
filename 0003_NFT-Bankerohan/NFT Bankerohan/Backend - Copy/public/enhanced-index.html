@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NFT Generator - Enhanced</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    h1 {
+      color: #667eea;
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 2.5em;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 1.1em;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .generate-btn, .save-btn {
+      flex: 1;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.2em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .save-btn {
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    }
+
+    .generate-btn:hover, .save-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .save-btn:hover {
+      box-shadow: 0 10px 20px rgba(76, 175, 80, 0.4);
+    }
+
+    .generate-btn:disabled, .save-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .nft-card {
+      display: none;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 20px;
+    }
+
+    .nft-card.active {
+      display: block;
+      animation: fadeIn 0.5s;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .nft-id {
+      background: white;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-family: "Courier New", monospace;
+      font-size: 0.9em;
+      color: #333;
+      border: 2px solid #667eea;
+    }
+
+    .nft-combined-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e8eef7 100%);
+      border-radius: 15px;
+      overflow: hidden;
+    }
+
+    .nft-layer {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    #nftHeadLayer {
+      top: 0;
+      z-index: 1;
+    }
+
+    #nftHatLayer {
+      top: -10px;
+      z-index: 2;
+    }
+
+    .traits-info {
+      display: flex;
+      justify-content: space-around;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .trait-info-item {
+      background: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      text-align: center;
+      flex: 1;
+    }
+
+    .trait-info-label {
+      font-size: 0.8em;
+      color: #667eea;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .trait-info-name {
+      font-size: 1em;
+      color: #333;
+    }
+
+    .save-form {
+      display: none;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .save-form.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .timestamp {
+      text-align: center;
+      color: #666;
+      font-size: 0.9em;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid #e0e0e0;
+    }
+
+    .loading {
+      text-align: center;
+      color: #667eea;
+      font-size: 1.2em;
+      display: none;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error, .success {
+      display: none;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .error.active {
+      display: block;
+      background: #ff6b6b;
+      color: white;
+      animation: fadeIn 0.5s;
+    }
+
+    .success.active {
+      display: block;
+      background: #4CAF50;
+      color: white;
+      animation: fadeIn 0.5s;
+    }
+
+    .current-nft-data {
+      display: none;
+      background: #f0f0f0;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      font-family: monospace;
+      font-size: 0.8em;
+    }
+
+    .current-nft-data.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 NFT Generator - Enhanced</h1>
+    <p class="subtitle">Generate unique NFTs and save them to the marketplace</p>
+
+    <div class="button-group">
+      <button class="generate-btn" onclick="generateNFT()">✨ Generate NFT</button>
+      <button class="save-btn" onclick="toggleSaveForm()" disabled id="saveBtn">💾 Save to Marketplace</button>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <span id="loadingText">Generating your NFT...</span>
+    </div>
+
+    <div class="error" id="error"></div>
+    <div class="success" id="success"></div>
+
+    <div class="nft-card" id="nftCard">
+      <div class="nft-id" id="nftId"></div>
+
+      <div class="current-nft-data" id="currentNftData"></div>
+
+      <div class="nft-combined-container">
+        <img class="nft-layer" id="nftHeadLayer" src="" alt="Head" />
+        <img class="nft-layer" id="nftHatLayer" src="" alt="Hat" />
+      </div>
+
+      <div class="traits-info">
+        <div class="trait-info-item">
+          <div class="trait-info-label">🎩 Hat</div>
+          <div class="trait-info-name" id="traitHat"></div>
+        </div>
+        <div class="trait-info-item">
+          <div class="trait-info-label">👤 Head</div>
+          <div class="trait-info-name" id="traitHead"></div>
+        </div>
+      </div>
+
+      <div class="save-form" id="saveForm">
+        <h3>Save NFT to Marketplace</h3>
+        <div class="form-group">
+          <label for="nftTitle">Title:</label>
+          <input type="text" id="nftTitle" placeholder="Enter NFT title">
+        </div>
+        <div class="form-group">
+          <label for="nftDescription">Description:</label>
+          <textarea id="nftDescription" rows="3" placeholder="Describe your NFT"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="nftPrice">Price (ETH):</label>
+          <input type="number" id="nftPrice" step="0.01" min="0" placeholder="0.1">
+        </div>
+        <div class="form-group">
+          <label for="nftCategory">Category:</label>
+          <select id="nftCategory">
+            <option value="Generated">Generated</option>
+            <option value="Digital Art">Digital Art</option>
+            <option value="Abstract">Abstract</option>
+            <option value="Cyberpunk">Cyberpunk</option>
+            <option value="Nature">Nature</option>
+            <option value="Geometric">Geometric</option>
+            <option value="Space">Space</option>
+          </select>
+        </div>
+        <button class="save-btn" onclick="saveNFT()" style="width: 100%;">💾 Save NFT</button>
+      </div>
+
+      <div class="timestamp" id="timestamp"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentNFT = null;
+
+    async function generateNFT() {
+      const button = document.querySelector(".generate-btn");
+      const saveBtn = document.getElementById("saveBtn");
+      const loading = document.getElementById("loading");
+      const error = document.getElementById("error");
+      const success = document.getElementById("success");
+      const nftCard = document.getElementById("nftCard");
+      const saveForm = document.getElementById("saveForm");
+
+      error.classList.remove("active");
+      success.classList.remove("active");
+      nftCard.classList.remove("active");
+      saveForm.classList.remove("active");
+      loading.classList.add("active");
+      button.disabled = true;
+      saveBtn.disabled = true;
+
+      try {
+        const response = await fetch("http://localhost:3001/api/generate-nft");
+
+        if (!response.ok) throw new Error("Failed to generate NFT");
+
+        const data = await response.json();
+        currentNFT = data;
+
+        document.getElementById("nftId").textContent = `ID: ${data.id}`;
+        document.getElementById("currentNftData").textContent = `Data: ${JSON.stringify(data, null, 2)}`;
+        document.getElementById("currentNftData").classList.add("active");
+
+        const hatData = typeof data.traits.hat === "object" ? data.traits.hat : { name: data.traits.hat, image: "" };
+        const headData = typeof data.traits.head === "object" ? data.traits.head : { name: data.traits.head, image: "" };
+
+        document.getElementById("nftHeadLayer").src = headData.image || "";
+        document.getElementById("nftHatLayer").src = hatData.image || "";
+
+        document.getElementById("traitHat").textContent = hatData.name;
+        document.getElementById("traitHead").textContent = headData.name;
+
+        document.getElementById("timestamp").textContent = `Created: ${new Date(data.createdAt).toLocaleString()}`;
+
+        // Auto-fill form with generated data
+        document.getElementById("nftTitle").value = `Generated NFT #${data.id.slice(0, 8)}`;
+        document.getElementById("nftDescription").value = `A unique NFT with ${headData.name} head and ${hatData.name} hat. Generated with unique ID: ${data.id}`;
+        document.getElementById("nftPrice").value = "0.1";
+
+        loading.classList.remove("active");
+        nftCard.classList.add("active");
+        saveBtn.disabled = false;
+      } catch (err) {
+        console.error("Error:", err);
+        error.textContent = `Error: ${err.message}. Make sure the generator server is running on port 3001.`;
+        error.classList.add("active");
+        loading.classList.remove("active");
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    function toggleSaveForm() {
+      const saveForm = document.getElementById("saveForm");
+      const saveBtn = document.getElementById("saveBtn");
+      
+      if (saveForm.classList.contains("active")) {
+        saveForm.classList.remove("active");
+        saveBtn.textContent = "💾 Save to Marketplace";
+      } else {
+        saveForm.classList.add("active");
+        saveBtn.textContent = "❌ Cancel";
+      }
+    }
+
+    async function saveNFT() {
+      if (!currentNFT) {
+        alert("Please generate an NFT first!");
+        return;
+      }
+
+      const title = document.getElementById("nftTitle").value;
+      const description = document.getElementById("nftDescription").value;
+      const price = document.getElementById("nftPrice").value;
+      const category = document.getElementById("nftCategory").value;
+
+      if (!title || !description || !price) {
+        alert("Please fill in all required fields!");
+        return;
+      }
+
+      const loading = document.getElementById("loading");
+      const error = document.getElementById("error");
+      const success = document.getElementById("success");
+      const loadingText = document.getElementById("loadingText");
+
+      error.classList.remove("active");
+      success.classList.remove("active");
+      loading.classList.add("active");
+      loadingText.textContent = "Saving NFT to marketplace...";
+
+      try {
+        const formData = new FormData();
+        formData.append('nftData', JSON.stringify(currentNFT));
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('price', price);
+        formData.append('category', category);
+
+        const response = await fetch("http://localhost:3001/api/save-nft", {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) throw new Error("Failed to save NFT");
+
+        const result = await response.json();
+
+        loading.classList.remove("active");
+        success.textContent = result.message || "NFT saved successfully!";
+        success.classList.add("active");
+
+        // Hide save form
+        document.getElementById("saveForm").classList.remove("active");
+        document.getElementById("saveBtn").textContent = "💾 Save to Marketplace";
+
+      } catch (err) {
+        console.error("Error saving NFT:", err);
+        loading.classList.remove("active");
+        error.textContent = `Error: ${err.message}`;
+        error.classList.add("active");
+      }
+    }
+  </script>
+</body>
+</html>
